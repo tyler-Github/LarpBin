@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/header') %>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% pastes.forEach(paste => { %>
+                <tr>
+                    <td><a href="/paste/<%= paste.id %>"><%= paste.title %></a></td>
+                    <td><%= paste.content %></td>
+                    <td><%= new Date(paste.created_at).toLocaleString() %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>

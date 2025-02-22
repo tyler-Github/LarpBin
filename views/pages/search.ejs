@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/header') %>
+</head>
+<body>
+    <% if (loggedIn == true) { %>
+        <!-- Logged in -->
+        <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/"><span style="color: #c07f0f">LARP<span
+                            style="color: #FFFFFF">BIN</span></span></a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                <li><a href="/newpaste"><span class="glyphicon glyphicon-paste"></span> New Paste</a></li>
+                <li><a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                <li><a href="/upgrade"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
+                <li><a href="/wallofclowns"><span class="glyphicon glyphicon-pawn"></span> Wall of Clowns</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="/">About
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/faq"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
+                        <li><a href="/viewpaste?id=55038"><span class="glyphicon glyphicon-book"></span> ToS</a>
+                        </li>
+                        <li><a href="/viewpaste?id=29175"><span class="glyphicon glyphicon-refresh"></span>
+                                Changelog</a></li>
+                        <li><a href="/donate"><span class="glyphicon glyphicon-bitcoin"></span> Donate</a></li>
+                        <li><a href="/prices"><span class="glyphicon glyphicon-tags"></span> Prices</a></li>
+                        <li><a href="/contact"><span class="glyphicon glyphicon-envelope"></span> Contact</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/profile?uid=<%= user.id %>"><span class="glyphicon glyphicon-user"></span>
+                        Profile</a></li>
+                <li><a href="/login/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                </li>
+            </ul>
+        </div>
+        </nav>
+        <% } else { %>
+            <!-- Not logged in -->
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/"><span style="color: #c07f0f">LARP<span
+                                    style="color: #FFFFFF">BIN</span></span></a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                        <li><a href="/newpaste"><span class="glyphicon glyphicon-paste"></span> New Paste</a></li>
+                        <li><a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                        <li><a href="/upgrade"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
+                        <li><a href="/wallofclowns"><span class="glyphicon glyphicon-pawn"></span> Wall of
+                                Clowns</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="/">About
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/faq.php"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
+                                <li><a href="/viewpaste.php?id=55038"><span class="glyphicon glyphicon-book"></span>
+                                        ToS</a></li>
+                                <li><a href="/viewpaste.php?id=29175"><span
+                                            class="glyphicon glyphicon-refresh"></span> Changelog</a></li>
+                                <li><a href="/donate.php"><span class="glyphicon glyphicon-bitcoin"></span>
+                                        Donate</a></li>
+                                <li><a href="/prices.php"><span class="glyphicon glyphicon-tags"></span> Prices</a>
+                                </li>
+                                <li><a href="/contact.php"><span class="glyphicon glyphicon-envelope"></span>
+                                        Contact</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <% } %>
+
+
+    <div class="container">
+        <div class="col-lg-12 col-md-12 col-12"><br>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <img style="margin-bottom:12px" src="/media/icon.png" width="646px" height="180px">
+        <h4 ><b><a class="text-center-color" href="https://t.me/skidbinsite" rel="norefferer" target="_blank">Official
+                    LarpBin
+                    Telegram</a></b></h4><br>
+    </div>
+
+    <div class="div-center">
+        <form id="search-form" method="GET" action="/search">
+            <input name="query" type="text" placeholder="Search for.." value="">
+            <input type="hidden" name="type" value=<%= type %>> <!-- Predefined type -->
+            <input type="submit" value="Search">
+        </form>
+    </div>
+    
+
+    <div class="container">
+        <div class="col-lg-12 col-md-12 col-12"><br>
+        </div>
+    </div>
+    <div class="container">
+    <% if (message) { %>
+        <p><%= message %></p>
+    <% } %>
+        <% if (type === 'posts') { %>
+        <% if (pastes.length === 0) { %>
+        <% } else { %>
+            <table class="table table-hover">
+                <thead class="tb-highlight">
+                    <tr>
+                        <th>Title</th>
+                        <th>Made by</th>
+                        <th>Date created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% pastes.forEach(paste => { %>
+                        <tr>
+                            <td><a href="/paste/<%= paste.id %>"><%= paste.title %></a></td>
+                            <td><a href="/profile/<%= paste.user_id %>"><%= paste.user_name %></a></td>
+                            <td><%= paste.created_at %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    <% } else if (type === 'users') { %>
+        <% if (users.length === 0) { %>
+        <% } else { %>
+            <table class="table table-hover">
+                <thead class="tb-highlight">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Joined</th>
+                        <th>Paste Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td><%= user.id %></td>
+                            <td><a href="/profile/<%= user.id %>"><%= user.username %></a></td>
+                            <td><%= user.created_at %></td>
+                            <td><%= user.paste_count %></td> <!-- Assuming user has a paste_count property -->
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    <% } %>
+        </div>
+</body>
+</html>
