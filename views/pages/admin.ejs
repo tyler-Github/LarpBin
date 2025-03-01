@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <%- include('../partials/header') %>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <p>Welcome, <%= username %></p>
+
+    <h2>Pastes</h2>
+
+    <!-- Search Bar -->
+    <input type="text" id="searchInput" placeholder="Search pastes..." oninput="searchPastes()">
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="pasteTable"></tbody>
+    </table>
+
+    <p id="loadingMessage" style="display: none;">Loading more pastes...</p>
+
+    <br>
+    <a href="/">Back to Home</a>
+
+    <script>
+        let offset = 0;
+        let loading = false;
+        let searchQuery = '';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadPastes();
+            window.addEventListener("scroll", handleScroll);
+        });
+
+        function handleScroll() {
+            if (loading) return;
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+                loadPastes();
+            }
+        }
+
+        function loadPastes() {
+            loading = true;
+            document.getElementById("loadingMessage").style.display = "block";
+
+            fetch(`/admin/pastes?offset=${offset}&search=${encodeURIComponent(searchQuery)}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("loadingMessage").style.display = "none";
+                    if (data.length === 0) return;
+
+                    const table = document.getElementById("pasteTable");
+                    data.forEach(paste => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${paste.id}</td>
+                            <td>${paste.user_name}</td>
+                            <td>${paste.title}</td>
+                            <td>${paste.content}</td>
+                            <td>${paste.created_at}</td>
+                            <td>
+                                <button onclick="deletePaste(${paste.id})">Delete</button>
+                            </td>
+                        `;
+                        table.appendChild(row);
+                    });
+
+                    offset += data.length;
+                    loading = false;
+                });
+        }
+
+        function searchPastes() {
+            offset = 0;
+            searchQuery = document.getElementById("searchInput").value;
+            document.getElementById("pasteTable").innerHTML = "";
+            loadPastes();
+        }
+
+        function deletePaste(id) {
+            if (!confirm('Are you sure?')) return;
+
+            fetch('/admin/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `pasteId=${id}`
+            }).then(() => {
+                searchPastes();
+            });
+        }
+    </script>
+</body>
+</html>

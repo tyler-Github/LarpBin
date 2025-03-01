@@ -20,14 +20,16 @@ router.post('/', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const createdAt = new Date().toISOString(); // Get current timestamp
 
-    db.run(`INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, ?)`, [username, email, hashedPassword, createdAt], function(err) {
-        if (err) {
-            return res.status(500).send("Error accessing the database");
+    db.run(
+        `INSERT INTO users (username, email, password, created_at, admin) VALUES (?, ?, ?, ?, 0)`,
+        [username, email, hashedPassword, createdAt],
+        function(err) {
+            if (err) {
+                return res.status(500).send("Error accessing the database");
+            }
+            res.redirect('/login');
         }
-        res.redirect('/login');
-    });
+    );
 });
-
-
 
 module.exports = router;
