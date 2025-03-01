@@ -8,23 +8,22 @@ const db = new sqlite3.Database('./database/pastebin.db');
 router.get('/', (req, res) => {
     const { id } = req.query;
 
-    // Check if the id parameter is provided
     if (!id) {
         return res.status(400).send('Paste ID is required');
     }
 
-    // Retrieve the paste and user information from the database by paste ID
+    // Use COALESCE to default to "Anonymous" if no user is found
     const pasteSql = `
-        SELECT pastes.*, users.username AS user_name, users.id AS user_id 
+        SELECT pastes.*, COALESCE(users.username, 'Anonymous') AS user_name, users.id AS user_id 
         FROM pastes 
-        JOIN users ON pastes.user_name = users.username 
+        LEFT JOIN users ON pastes.user_name = users.username 
         WHERE pastes.id = ?
     `;
 
     const commentsSql = `
-        SELECT comments.*, users.username 
+        SELECT comments.*, COALESCE(users.username, 'Anonymous') AS username 
         FROM comments 
-        JOIN users ON comments.user_id = users.id 
+        LEFT JOIN users ON comments.user_id = users.id 
         WHERE comments.paste_id = ? 
         ORDER BY comments.created_at DESC
     `;
@@ -44,7 +43,6 @@ router.get('/', (req, res) => {
                 return res.status(500).send('Internal Server Error');
             }
 
-            // Render the viewpaste.ejs template with the paste data and comments
             res.render('pages/viewpaste', { paste, comments });
         });
     });
@@ -54,8 +52,8 @@ router.get('/', (req, res) => {
 router.post('/comment', (req, res) => {
     const { paste_id, user_id, comment } = req.body;
 
-    if (!paste_id || !user_id || !comment) {
-        return res.status(400).send('All fields are required');
+    if (!paste_id || !comment) {
+        return res.status(400).send('Paste ID and comment are required');
     }
 
     const sql = `
@@ -64,7 +62,7 @@ router.post('/comment', (req, res) => {
     `;
     const createdAt = new Date().toISOString();
 
-    db.run(sql, [paste_id, user_id, comment, createdAt], function (err) {
+    db.run(sql, [paste_id, user_id || null, comment, createdAt], function (err) {
         if (err) {
             console.error(err.message);
             return res.status(500).send('Internal Server Error');
@@ -77,12 +75,10 @@ router.post('/comment', (req, res) => {
 router.get('/viewraw', (req, res) => {
     const { id } = req.query;
 
-    // Check if the id parameter is provided
     if (!id) {
         return res.status(400).send('Paste ID is required');
     }
 
-    // Retrieve the paste content from the database by ID
     const sql = 'SELECT content FROM pastes WHERE id = ?';
     db.get(sql, [id], (err, row) => {
         if (err) {
@@ -93,7 +89,6 @@ router.get('/viewraw', (req, res) => {
             return res.status(404).send('Paste not found');
         }
 
-        // Send the raw content as plain text
         res.type('text/plain').send(row.content);
     });
 });
