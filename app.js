@@ -80,6 +80,7 @@ function setupDatabase() {
         db.run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
+            admin BOOLEAN NOT NULL DEFAULT 0,
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             created_at TEXT NOT NULL
@@ -123,6 +124,7 @@ app.use('/paste', require('./routes/viewpaste'));
 app.use('/login', require('./routes/login'));
 app.use('/signup', require('./routes/signup'));
 app.use('/profile', require('./routes/profile'));
+app.use('/admin', require('./routes/admin'));
 
 // Start server
 const PORT = process.env.PORT || 2000;
