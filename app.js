@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');
@@ -23,6 +24,13 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false } // Use 'secure: true' if using HTTPS
 }));
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 // Middleware for Passport.js
 app.use(passport.initialize());
@@ -84,7 +92,7 @@ function setupDatabase() {
             console.log('Users table created or already exists.');
         });
 
-       // Create views table
+        // Create views table
         db.run(`CREATE TABLE IF NOT EXISTS views (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             paste_id INTEGER NOT NULL,
