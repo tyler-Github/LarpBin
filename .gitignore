@@ -50,6 +50,8 @@ Dockerfile
 # TypeScript cache
 *.tsbuildinfo
 
+prisma
+
 # Optional npm cache directory
 .npm
 
