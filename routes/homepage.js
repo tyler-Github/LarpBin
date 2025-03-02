@@ -5,12 +5,17 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./database/pastebin.db');
 
 router.get('/', (req, res) => {
-    const page = parseInt(req.query.page) || 1; 
-    const limit = 30; 
+    const page = parseInt(req.query.page) || 1;
+    const limit = 30;
     const offset = (page - 1) * limit;
 
     const sql = `
-        SELECT pastes.*, users.id AS user_id, pastes.pinned
+        SELECT 
+            pastes.*, 
+            users.id AS user_id, 
+            pastes.pinned,
+            (SELECT COUNT(*) FROM views WHERE views.paste_id = pastes.id) AS views_count,
+            (SELECT COUNT(*) FROM comments WHERE comments.paste_id = pastes.id) AS comments_count
         FROM pastes 
         LEFT JOIN users ON pastes.user_name = users.username 
         ORDER BY pastes.pinned DESC, pastes.created_at DESC 
@@ -19,13 +24,15 @@ router.get('/', (req, res) => {
 
     db.all(sql, [limit, offset], (err, rows) => {
         if (err) {
-            throw err;
+            console.error(err);
+            return res.status(500).send('Internal Server Error');
         }
 
         // Count total pastes for pagination
         db.get(`SELECT COUNT(*) AS total FROM pastes`, [], (err, countResult) => {
             if (err) {
-                throw err;
+                console.error(err);
+                return res.status(500).send('Internal Server Error');
             }
 
             const totalPastes = countResult.total;
@@ -38,7 +45,8 @@ router.get('/', (req, res) => {
                 const username = req.cookies.username;
                 db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
                     if (err) {
-                        throw err;
+                        console.error(err);
+                        return res.status(500).send('Internal Server Error');
                     }
                     res.render('pages/homepage', { 
                         pastes: rows, 

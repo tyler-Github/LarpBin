@@ -123,18 +123,21 @@
                                     <th>Title</th>
                                     <th>Made by</th>
                                     <th>File Size</th>
+                                    <th>Comments</th>
+                                    <th>Views</th>
                                     <th>Date created</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Pinned Pastes Section -->
-                                <% pastes.filter(p => p.pinned).forEach(paste => { %>
+                                <% pastes.filter(p=> p.pinned).forEach(paste => { %>
                                     <tr class="paste-item <%= paste.post_type %>">
                                         <td>
                                             <a class="paste-link" href="/paste?id=<%= paste.id %>" target="_blank"
                                                 title="<%= paste.title %>"
                                                 style="color: <%= paste.text_color %> !important; font-weight: bold;">
-                                                <span class="pin-icon" title="This paste is pinned by an Admin">📌</span>
+                                                <span class="pin-icon"
+                                                    title="This paste is pinned by an Admin">📌</span>
                                                 <%= paste.title %>
                                             </a>
                                         </td>
@@ -147,61 +150,71 @@
                                             <%= paste.content_size %> bytes
                                         </td>
                                         <td style="color: <%= paste.text_color %> !important;">
-                                            <%= paste.created_at %>
+                                            <%= paste.comments_count %>
                                         </td>
-                                    </tr>
-                                <% }) %>
-                    
-                                <!-- Regular Pastes Section -->
-                                <% pastes.filter(p => !p.pinned).forEach(paste => { %>
-                                    <tr class="paste-item <%= paste.post_type %>">
-                                        <td><a class="paste-link" href="/paste?id=<%= paste.id %>" target="_blank"
-                                                title="<%= paste.title %>"
-                                                style="color: <%= paste.text_color %> !important;">
-                                                <%= paste.title %>
-                                            </a></td>
-                                        <td><a class="paste-link <%= paste.post_type %>"
-                                                href="/profile?uid=<%= paste.user_id %>" target="_blank"
-                                                style="color: <%= paste.text_color %> !important;">
-                                                <%= paste.user_name %>
-                                            </a></td>
                                         <td style="color: <%= paste.text_color %> !important;">
-                                            <%= paste.content_size %> bytes
+                                            <%= paste.views_count %>
                                         </td>
                                         <td style="color: <%= paste.text_color %> !important;">
                                             <%= paste.created_at %>
                                         </td>
                                     </tr>
-                                <% }) %>
+                                    <% }) %>
+                                        <!-- Regular Pastes Section -->
+                                        <% pastes.filter(p=> !p.pinned).forEach(paste => { %>
+                                            <tr class="paste-item <%= paste.post_type %>">
+                                                <td><a class="paste-link" href="/paste?id=<%= paste.id %>"
+                                                        target="_blank" title="<%= paste.title %>"
+                                                        style="color: <%= paste.text_color %> !important;">
+                                                        <%= paste.title %>
+                                                    </a></td>
+                                                <td><a class="paste-link <%= paste.post_type %>"
+                                                        href="/profile?uid=<%= paste.user_id %>" target="_blank"
+                                                        style="color: <%= paste.text_color %> !important;">
+                                                        <%= paste.user_name %>
+                                                    </a></td>
+                                                <td style="color: <%= paste.text_color %> !important;">
+                                                    <%= paste.content_size %> bytes
+                                                </td>
+                                                <td style="color: <%= paste.text_color %> !important;">
+                                                    <%= paste.comments_count %>
+                                                </td>
+                                                <td style="color: <%= paste.text_color %> !important;">
+                                                    <%= paste.views_count %>
+                                                </td>
+                                                <td style="color: <%= paste.text_color %> !important;">
+                                                    <%= paste.created_at %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
                             </tbody>
                         </table>
-                    
-                        <div class="pagination">
-                            <% if (page > 1) { %>
-                                <a href="/?page=<%= page - 1 %>" class="page-btn">&lt;</a>
+
+                        <% if (totalPages> 1) { %>
+                            <div class="pagination">
+                                <% if (page> 1) { %>
+                                    <a href="/?page=<%= page - 1 %>" class="page-btn">&lt;</a>
+                                    <% } %>
+
+                                        <% let startPage=Math.max(1, page - 2); let endPage=Math.min(totalPages,
+                                            startPage + 4); if (endPage - startPage < 4) { startPage=Math.max(1, endPage
+                                            - 4); } %>
+
+                                            <% for (let i=startPage; i <=endPage; i++) { %>
+                                                <a href="/?page=<%= i %>"
+                                                    class="page-btn <%= i === page ? 'active' : '' %>">
+                                                    <%= i %>
+                                                </a>
+                                                <% } %>
+
+                                                    <% if (page < totalPages) { %>
+                                                        <a href="/?page=<%= page + 1 %>" class="page-btn">&gt;</a>
+                                                        <% } %>
+                            </div>
                             <% } %>
-                        
-                            <% 
-                                let startPage = Math.max(1, page - 2); 
-                                let endPage = Math.min(totalPages, startPage + 4);
-                        
-                                if (endPage - startPage < 4) {
-                                    startPage = Math.max(1, endPage - 4);
-                                }
-                            %>
-                        
-                            <% for (let i = startPage; i <= endPage; i++) { %>
-                                <a href="/?page=<%= i %>" class="page-btn <%= i === page ? 'active' : '' %>">
-                                    <%= i %>
-                                </a>
-                            <% } %>
-                        
-                            <% if (page < totalPages) { %>
-                                <a href="/?page=<%= page + 1 %>" class="page-btn">&gt;</a>
-                            <% } %>
-                        </div>
-                    </div>                        
-                    
+                    </div>
+                    </div>
+
 </body>
 
 </html>
