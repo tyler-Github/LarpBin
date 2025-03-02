@@ -186,7 +186,7 @@
                             <td>${paste.id}</td>
                             <td>${paste.user_name}</td>
                             <td>${paste.title}</td>
-                            <td>${paste.content}</td>
+                            <td>${paste.content.length > 10 ? paste.content.slice(0, 10) + '...' : paste.content}</td>
                             <td>${paste.created_at}</td>
                             <td>
                                  <button onclick="togglePin(${paste.id}, ${paste.pinned})">
@@ -224,13 +224,13 @@
                         <tr>
                             <td>${comment.id}</td>
                             <td>${comment.username || 'Anonymous'}</td>
-                            <td>${comment.comment}</td>
+                            <td>${paste.content.length > 10 ? paste.content.slice(0, 10) + '...' : paste.content}</td>
                            <td><button onclick="deleteItem('/admin/delete-comment', ${comment.id}, loadComments)">Delete</button></td>
                         </tr>`;
                 });
             });
         }
-        
+
         function deleteItem(url, id, reload) {
             fetch(url, {
                 method: 'POST',

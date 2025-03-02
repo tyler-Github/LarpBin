@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
     <%- include('../partials/header') %>
+    <style>
+        /* Default link styling */
+        a {
+            color: white; /* Default color */
+            text-decoration: none; /* Remove underline */
+        }
+
+        /* Hover effect for links */
+        a:hover {
+            color: #2a9fd6; /* Change color on hover */
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
 </head>
 <body class="past">
     <a onclick="showHide()" href="#" class="sidebar-show"><i class="fa fa-arrow-right"></i></a>
@@ -14,7 +27,23 @@
                 x.style.display = "none";
             }
         }
+
+        // Function to make links in text clickable
+        function makeLinksClickable() {
+            var elements = document.querySelectorAll('.view-paste, .b-content'); // These are the areas you want links to be clickable
+            elements.forEach(function(element) {
+                var text = element.innerHTML;
+                var urlRegex = /https?:\/\/[^\s]+/g;
+                element.innerHTML = text.replace(urlRegex, function(url) {
+                    return `<a href="${url}" target="_blank">${url}</a>`;
+                });
+            });
+        }
+
+        // Call the function when the page loads
+        window.onload = makeLinksClickable;
     </script>
+
     <div class="bin-buttons" id="bin-buttons">
         <p><b>Paste title:</b> <%= paste.title %></p>
         <p><b>Paste made by:</b> <a href="/profile?uid=<%= paste.user_id || 0 %>"><%= paste.user_name %></a></p>
