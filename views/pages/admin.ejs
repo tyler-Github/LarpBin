@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,11 +18,8 @@
             padding: 20px;
         }
 
-        h1, h2 {
-            color: #ffffff;
-        }
+        h1, h2 { color: #ffffff; }
 
-        /* Search Bar */
         .search-bar {
             width: 100%;
             max-width: 400px;
@@ -33,7 +31,6 @@
             border-radius: 5px;
         }
 
-        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -49,16 +46,10 @@
             border-bottom: 1px solid #333;
         }
 
-        th {
-            background: #333;
-            color: #fff;
-        }
+        th { background: #333; color: #fff; }
 
-        tr:hover {
-            background: #292929;
-        }
+        tr:hover { background: #292929; }
 
-        /* Buttons */
         button {
             background: #ff5252;
             color: white;
@@ -69,9 +60,7 @@
             transition: 0.3s;
         }
 
-        button:hover {
-            background: #ff3333;
-        }
+        button:hover { background: #ff3333; }
 
         .secondary-btn {
             background: #444;
@@ -81,14 +70,6 @@
             background: #666;
         }
 
-        /* Loading Message */
-        #loadingMessage {
-            text-align: center;
-            margin-top: 10px;
-            color: #ff5252;
-        }
-
-        /* Database Management Section */
         .database-section {
             margin-top: 30px;
             padding: 20px;
@@ -113,8 +94,7 @@
 
     <!-- Pastes Section -->
     <h2>Pastes</h2>
-    <input type="text" id="pasteSearch" class="search-bar" placeholder="Search pastes..." oninput="searchPastes()">
-    
+    <input type="text" id="pasteSearch" class="search-bar" placeholder="Search pastes..." oninput="loadPastes()">
     <table>
         <thead>
             <tr>
@@ -130,12 +110,9 @@
         <tbody id="pasteTable"></tbody>
     </table>
 
-    <p id="loadingMessage" style="display: none;">Loading more pastes...</p>
-
     <!-- Users Section -->
     <h2>Users</h2>
-    <input type="text" id="userSearch" class="search-bar" placeholder="Search users..." oninput="searchUsers()">
-
+    <input type="text" id="userSearch" class="search-bar" placeholder="Search users..." oninput="loadUsers()">
     <table>
         <thead>
             <tr>
@@ -150,8 +127,7 @@
 
     <!-- Comments Section -->
     <h2>Comments</h2>
-    <input type="text" id="commentSearch" class="search-bar" placeholder="Search comments..." oninput="searchComments()">
-
+    <input type="text" id="commentSearch" class="search-bar" placeholder="Search comments..." oninput="loadComments()">
     <table>
         <thead>
             <tr>
@@ -171,8 +147,8 @@
             <button class="secondary-btn">Download Database</button>
         </a>
 
-        <form id="uploadForm" enctype="multipart/form-data" style="margin-top: 10px;">
-            <input type="file" name="database" id="databaseFile" required>
+        <form id="uploadForm">
+            <input type="file" id="databaseFile" required>
             <button type="submit">Upload Database</button>
         </form>
     </div>
@@ -181,87 +157,95 @@
     <a href="/" style="color: #ff5252;">Back to Home</a>
 
     <script>
-        let offset = 0;
-        let loading = false;
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadPastes();
-            loadUsers();
-            loadComments();
-        });
+        function fetchData(url, callback) {
+            fetch(url)
+                .then(res => res.json())
+                .then(data => callback(data))
+                .catch(err => console.error('Error:', err));
+        }
 
         function loadPastes() {
-            fetch(`/admin/pastes?offset=${offset}`)
-                .then(res => res.json())
-                .then(data => {
-                    const table = document.getElementById("pasteTable");
-                    data.forEach(paste => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
+            fetchData(`/admin/pastes?search=${document.getElementById("pasteSearch").value}`, data => {
+                const table = document.getElementById("pasteTable");
+                table.innerHTML = "";
+                data.forEach(paste => {
+                    table.innerHTML += `
+                        <tr>
                             <td>${paste.id}</td>
                             <td>${paste.user_name}</td>
                             <td>${paste.title}</td>
                             <td>${paste.content}</td>
                             <td>${paste.created_at}</td>
-                            <td>${paste.pinned ? '✅' : '❌'}</td>
                             <td>
-                                <button onclick="deletePaste(${paste.id})">Delete</button>
+                                 <button onclick="togglePin(${paste.id}, ${paste.pinned})">
+                                ${paste.pinned ? 'Pinned' : 'Pin'}
+                                 </button>
                             </td>
-                        `;
-                        table.appendChild(row);
-                    });
+                            <td><button onclick="deleteItem('/admin/delete', { pasteId: ${paste.id} }, loadPastes)">Delete</button></td>
+                        </tr>`;
                 });
+            });
         }
 
         function loadUsers() {
-            fetch(`/admin/users`)
-                .then(res => res.json())
-                .then(data => {
-                    const table = document.getElementById("userTable");
-                    data.forEach(user => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
+            fetchData(`/admin/users?search=${document.getElementById("userSearch").value}`, data => {
+                const table = document.getElementById("userTable");
+                table.innerHTML = "";
+                data.forEach(user => {
+                    table.innerHTML += `
+                        <tr>
                             <td>${user.id}</td>
                             <td>${user.username}</td>
                             <td>${user.email}</td>
-                            <td>
-                                <button onclick="deleteUser(${user.id})">Delete</button>
-                            </td>
-                        `;
-                        table.appendChild(row);
-                    });
+                            <td><button onclick="deleteItem('/admin/delete-user', { userId: ${user.id} }, loadUsers)">Delete</button></td>
+                        </tr>`;
                 });
+            });
         }
 
         function loadComments() {
-            fetch(`/admin/comments`)
-                .then(res => res.json())
-                .then(data => {
-                    const table = document.getElementById("commentTable");
-                    data.forEach(comment => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
+            fetchData(`/admin/comments?search=${document.getElementById("commentSearch").value}`, data => {
+                const table = document.getElementById("commentTable");
+                table.innerHTML = "";
+                data.forEach(comment => {
+                    table.innerHTML += `
+                        <tr>
                             <td>${comment.id}</td>
-                            <td>${comment.user_id || 'Anonymous'}</td>
+                            <td>${comment.username || 'Anonymous'}</td>
                             <td>${comment.comment}</td>
-                            <td>
-                                <button onclick="deleteComment(${comment.id})">Delete</button>
-                            </td>
-                        `;
-                        table.appendChild(row);
-                    });
+                            <td><button onclick="deleteItem('/admin/delete-comment', { commentId: ${comment.id} }, loadComments)">Delete</button></td>
+                        </tr>`;
                 });
+            });
         }
 
-        function deleteUser(id) {
-            fetch(`/admin/delete-user`, { method: 'POST', body: `userId=${id}` })
-                .then(() => loadUsers());
+        function deleteItem(url, data, reload) {
+            fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+                .then(() => reload());
         }
 
-        function deleteComment(id) {
-            fetch(`/admin/delete-comment`, { method: 'POST', body: `commentId=${id}` })
-                .then(() => loadComments());
+        function togglePin(id, isPinned) {
+            fetch('/admin/toggle-pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `pasteId=${id}&pinned=${isPinned ? 0 : 1}`
+            }).then(() => {
+                loadPastes();
+            });
         }
+
+        document.getElementById("uploadForm").addEventListener("submit", e => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append("database", document.getElementById("databaseFile").files[0]);
+            fetch('/admin/upload-db', { method: 'POST', body: formData })
+                .then(() => alert('Database uploaded successfully!'));
+        });
+
+        loadPastes();
+        loadUsers();
+        loadComments();
     </script>
 </body>
+
 </html>
