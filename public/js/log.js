@@ -44,7 +44,7 @@ console.log(`
 "color: #FFE770; font-weight: bold;"   // Lightest orange
 );
 
-console.log("%c[INFO] %cWelcome to LarpBin – The sleek pastebin!", "color: #FFA500; font-weight: bold;", "color: white;");
+console.log("%c[INFO] %cWelcome to LeakBin – The sleek pastebin!", "color: #FFA500; font-weight: bold;", "color: white;");
 console.log("%c[WARNING] %cFor your security, avoid sharing sensitive data in pastes. Your account safety matters!", "color: #FF8800; font-weight: bold;", "color: white;");
 
 // Wait for a moment to ensure error tracking works

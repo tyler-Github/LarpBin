@@ -39,6 +39,45 @@ router.get('/pastes', isAdmin, (req, res) => {
     );
 });
 
+// API for loading users
+router.get('/users', isAdmin, (req, res) => {
+    const search = req.query.search ? `%${req.query.search}%` : '%';
+
+    db.all(
+        `SELECT id, username, email FROM users WHERE username LIKE ? ORDER BY id DESC`,
+        [search],
+        (err, users) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+            res.json(users);
+        }
+    );
+});
+
+// API for loading comments
+router.get('/comments', isAdmin, (req, res) => {
+    const search = req.query.search ? `%${req.query.search}%` : '%';
+
+    db.all(
+        `SELECT comments.id, comments.paste_id, users.username, comments.comment, comments.created_at
+         FROM comments
+         JOIN users ON comments.user_id = users.id
+         WHERE comments.comment LIKE ?
+         ORDER BY comments.created_at DESC`,
+        [search],
+        (err, comments) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ error: 'Database error' });
+            }
+            res.json(comments);
+        }
+    );
+});
+
+
 // Delete a paste
 router.post('/delete', isAdmin, (req, res) => {
     const pasteId = req.body.pasteId;
@@ -77,6 +116,36 @@ router.get('/download-db', isAdmin, (req, res) => {
             console.error('Error downloading database:', err);
             res.status(500).send('Error downloading database');
         }
+    });
+});
+
+// Delete a comment
+router.post('/delete-comment', isAdmin, (req, res) => {
+    const commentId = req.body.commentId;
+
+    if (!commentId) return res.status(400).send('Comment ID required');
+
+    db.run('DELETE FROM comments WHERE id = ?', [commentId], (err) => {
+        if (err) {
+            console.error('Error deleting comment:', err);
+            return res.status(500).send('Database error');
+        }
+        res.sendStatus(200);
+    });
+});
+
+// Delete a user and their associated data
+router.post('/delete-user', isAdmin, (req, res) => {
+    const userId = req.body.userId;
+
+    if (!userId) return res.status(400).send('User ID required');
+
+    db.run('DELETE FROM users WHERE id = ?', [userId], (err) => {
+        if (err) {
+            console.error('Error deleting user:', err);
+            return res.status(500).send('Database error');
+        }
+        res.sendStatus(200);
     });
 });
 
