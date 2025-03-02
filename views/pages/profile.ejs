@@ -423,8 +423,8 @@
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
+                        const pastes = <%- JSON.stringify(pastes) %>; 
                         const itemsPerPage = 10;
-                        const pastes = <% - JSON.stringify(pastes) %>;
                         let currentPage = 1;
 
                         function renderPastes() {
@@ -465,7 +465,7 @@
                             document.getElementById('pagination-container').style.display = 'flex';
                             renderPastes();
                         }
-                    });           
+                    });
                 </script>
                 <script src="/js/log.js"></script>
 </body>
