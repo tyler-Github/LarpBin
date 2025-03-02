@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const fileUpload = require('express-fileupload');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
 
@@ -16,6 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
+app.use(fileUpload());
 app.use(session({
     secret: 'fewwwefwefewfnnfwewejfnknwefjwekfjbkwejbkef',
     resave: false,

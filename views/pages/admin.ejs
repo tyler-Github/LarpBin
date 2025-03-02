@@ -7,6 +7,107 @@
     <title>Admin Panel</title>
     <link rel="stylesheet" href="/css/admin.css">
     <%- include('../partials/header') %>
+
+        <style>
+            /* Dark Mode Styling */
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
+
+            h1,
+            h2 {
+                color: #ffffff;
+            }
+
+            /* Search Bar */
+            #searchInput {
+                width: 100%;
+                max-width: 400px;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #333;
+                background: #222;
+                color: #fff;
+                border-radius: 5px;
+            }
+
+            /* Table Styling */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: #1e1e1e;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            th,
+            td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #333;
+            }
+
+            th {
+                background: #333;
+                color: #fff;
+            }
+
+            tr:hover {
+                background: #292929;
+            }
+
+            /* Buttons */
+            button {
+                background: #ff5252;
+                color: white;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            button:hover {
+                background: #ff3333;
+            }
+
+            /* Secondary Buttons */
+            .secondary-btn {
+                background: #444;
+            }
+
+            .secondary-btn:hover {
+                background: #666;
+            }
+
+            /* Loading Message */
+            #loadingMessage {
+                text-align: center;
+                margin-top: 10px;
+                color: #ff5252;
+            }
+
+            /* Database Management Section */
+            .database-section {
+                margin-top: 30px;
+                padding: 20px;
+                background: #1a1a1a;
+                border-radius: 8px;
+            }
+
+            .database-section input {
+                padding: 10px;
+                border: 1px solid #444;
+                background: #222;
+                color: #fff;
+                border-radius: 5px;
+                margin-right: 10px;
+            }
+        </style>
 </head>
 
 <body>
@@ -15,8 +116,6 @@
     </p>
 
     <h2>Pastes</h2>
-
-    <!-- Search Bar -->
     <input type="text" id="searchInput" placeholder="Search pastes..." oninput="searchPastes()">
 
     <table>
@@ -36,8 +135,20 @@
 
     <p id="loadingMessage" style="display: none;">Loading more pastes...</p>
 
+    <div class="database-section">
+        <h2>Database Management</h2>
+        <a href="/admin/download-db" download>
+            <button class="secondary-btn">Download Database</button>
+        </a>
+
+        <form id="uploadForm" enctype="multipart/form-data" style="margin-top: 10px;">
+            <input type="file" name="database" id="databaseFile" required>
+            <button type="submit">Upload Database</button>
+        </form>
+    </div>
+
     <br>
-    <a href="/">Back to Home</a>
+    <a href="/" style="color: #ff5252;">Back to Home</a>
 
     <script>
         let offset = 0;
@@ -78,7 +189,7 @@
                             <td>${paste.pinned ? '✅' : '❌'}</td>
                             <td>
                                 <button onclick="deletePaste(${paste.id})">Delete</button>
-                                <button onclick="togglePin(${paste.id}, ${paste.pinned})">
+                                <button class="secondary-btn" onclick="togglePin(${paste.id}, ${paste.pinned})">
                                     ${paste.pinned ? 'Unpin' : 'Pin'}
                                 </button>
                             </td>
@@ -119,6 +230,23 @@
                 searchPastes();
             });
         }
+
+        document.getElementById("uploadForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const fileInput = document.getElementById("databaseFile");
+            if (!fileInput.files.length) {
+                alert("Please select a file.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("database", fileInput.files[0]);
+            fetch('/admin/upload-db', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+                .then(result => alert(result))
+                .catch(error => console.error('Error:', error));
+        });
     </script>
     <script src="/js/log.js"></script>
 </body>
