@@ -134,3 +134,76 @@ body.bin .admin-options li a{
 body.bin .admin-options li a:hover{
     background-color: #4d2727;
 }
+
+.color-picker {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-picker label {
+    font-weight: bold;
+    color: #fff; /* Adjust for dark mode */
+}
+
+input[type="color"] {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 6px;
+    background: #111;
+    padding: 8px;
+    border-radius: 6px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #222;
+    color: #ddd;
+    text-decoration: none;
+    border: 1px solid #333;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.page-btn:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #666;
+}
+
+.page-btn.active {
+    background-color: #fff;
+    color: #000;
+    font-weight: bold;
+    border: 1px solid #fff;
+}
+
+.page-btn:active {
+    transform: scale(0.95);
+}
+
+/* Smooth transition for hover effect */
+.page-btn, .page-btn:hover {
+    transition: 0.2s ease-in-out;
+}

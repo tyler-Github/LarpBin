@@ -20,22 +20,18 @@
                         <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
                         <li><a href="/newpaste"><span class="glyphicon glyphicon-paste"></span> New Paste</a></li>
                         <li><a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                        <li><a href="/upgrade"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
-                        <li><a href="/wallofclowns"><span class="glyphicon glyphicon-pawn"></span> Wall of Clowns</a>
+                        <li><a href="/"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
+                        <li><a href="/"><span class="glyphicon glyphicon-pawn"></span> Wall of Clowns</a>
                         </li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="/">About
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="/faq"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
-                                <li><a href="/viewpaste?id=55038"><span class="glyphicon glyphicon-book"></span> ToS</a>
-                                </li>
-                                <li><a href="/viewpaste?id=29175"><span class="glyphicon glyphicon-refresh"></span>
-                                        Changelog</a></li>
-                                <li><a href="/donate"><span class="glyphicon glyphicon-bitcoin"></span> Donate</a></li>
-                                <li><a href="/prices"><span class="glyphicon glyphicon-tags"></span> Prices</a></li>
-                                <li><a href="/contact"><span class="glyphicon glyphicon-envelope"></span> Contact</a>
+                                <li><a href="/"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
+                                <li><a href="/"><span class="glyphicon glyphicon-bitcoin"></span> Donate</a></li>
+                                <li><a href="/"><span class="glyphicon glyphicon-tags"></span> Prices</a></li>
+                                <li><a href="/"><span class="glyphicon glyphicon-envelope"></span> Contact</a>
                                 </li>
                             </ul>
                         </li>
@@ -99,8 +95,9 @@
 
                     <div class="text-center">
                         <img style="margin-bottom:12px" src="/media/icon.png" width="646px" height="180px">
-                        <h4><b><a class="text-center-color" href="https://www.youtube.com/watch?v=xvFZjo5PgG0&pp=ygUJcmljayByb2xs" rel="norefferer"
-                                    target="_blank">Official
+                        <h4><b><a class="text-center-color"
+                                    href="https://www.youtube.com/watch?v=xvFZjo5PgG0&pp=ygUJcmljayByb2xs"
+                                    rel="norefferer" target="_blank">Official
                                     LarpBin
                                     Telegram</a></b></h4><br>
                     </div>
@@ -125,34 +122,86 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Made by</th>
-                                    <th>File Size</th> <!-- Add File Size column header -->
+                                    <th>File Size</th>
                                     <th>Date created</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% pastes.forEach(paste=> { %>
+                                <!-- Pinned Pastes Section -->
+                                <% pastes.filter(p => p.pinned).forEach(paste => { %>
+                                    <tr class="paste-item <%= paste.post_type %>">
+                                        <td>
+                                            <a class="paste-link" href="/paste?id=<%= paste.id %>" target="_blank"
+                                                title="<%= paste.title %>"
+                                                style="color: <%= paste.text_color %> !important; font-weight: bold;">
+                                                <span class="pin-icon" title="This paste is pinned by an Admin">📌</span>
+                                                <%= paste.title %>
+                                            </a>
+                                        </td>
+                                        <td><a class="paste-link <%= paste.post_type %>"
+                                                href="/profile?uid=<%= paste.user_id %>" target="_blank"
+                                                style="color: <%= paste.text_color %> !important;">
+                                                <%= paste.user_name %>
+                                            </a></td>
+                                        <td style="color: <%= paste.text_color %> !important;">
+                                            <%= paste.content_size %> bytes
+                                        </td>
+                                        <td style="color: <%= paste.text_color %> !important;">
+                                            <%= paste.created_at %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                    
+                                <!-- Regular Pastes Section -->
+                                <% pastes.filter(p => !p.pinned).forEach(paste => { %>
                                     <tr class="paste-item <%= paste.post_type %>">
                                         <td><a class="paste-link" href="/paste?id=<%= paste.id %>" target="_blank"
-                                                title="<%= paste.title %>">
+                                                title="<%= paste.title %>"
+                                                style="color: <%= paste.text_color %> !important;">
                                                 <%= paste.title %>
                                             </a></td>
                                         <td><a class="paste-link <%= paste.post_type %>"
                                                 href="/profile?uid=<%= paste.user_id %>" target="_blank"
-                                                style="color: <%= paste.text_color %>;">
+                                                style="color: <%= paste.text_color %> !important;">
                                                 <%= paste.user_name %>
                                             </a></td>
-                                        <td>
+                                        <td style="color: <%= paste.text_color %> !important;">
                                             <%= paste.content_size %> bytes
-                                        </td> <!-- Display File Size -->
-                                        <td>
+                                        </td>
+                                        <td style="color: <%= paste.text_color %> !important;">
                                             <%= paste.created_at %>
                                         </td>
                                     </tr>
-                                    <% }) %>
+                                <% }) %>
                             </tbody>
                         </table>
-                    </div>
-
+                    
+                        <div class="pagination">
+                            <% if (page > 1) { %>
+                                <a href="/?page=<%= page - 1 %>" class="page-btn">&lt;</a>
+                            <% } %>
+                        
+                            <% 
+                                let startPage = Math.max(1, page - 2); 
+                                let endPage = Math.min(totalPages, startPage + 4);
+                        
+                                if (endPage - startPage < 4) {
+                                    startPage = Math.max(1, endPage - 4);
+                                }
+                            %>
+                        
+                            <% for (let i = startPage; i <= endPage; i++) { %>
+                                <a href="/?page=<%= i %>" class="page-btn <%= i === page ? 'active' : '' %>">
+                                    <%= i %>
+                                </a>
+                            <% } %>
+                        
+                            <% if (page < totalPages) { %>
+                                <a href="/?page=<%= page + 1 %>" class="page-btn">&gt;</a>
+                            <% } %>
+                        </div>
+                    </div>                        
+                    
 </body>
 
 </html>

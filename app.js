@@ -27,17 +27,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Configure Passport.js local strategy
-passport.use(new LocalStrategy(
-    (username, password, done) => {
-        // Replace this with your actual authentication logic
-        if (username === 'admin' && password === 'password') {
-            return done(null, { username: 'admin' });
-        } else {
-            return done(null, false, { message: 'Incorrect username or password' });
-        }
-    }
-));
 
 // Serialize and deserialize user
 passport.serializeUser((user, done) => {
@@ -64,8 +53,10 @@ function setupDatabase() {
         db.run(`CREATE TABLE IF NOT EXISTS pastes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_name TEXT NOT NULL,
+            pinned BOOLEAN NOT NULL DEFAULT 0,
             title TEXT NOT NULL,
             content TEXT NOT NULL,
+            text_color TEXT NOT NULL DEFAULT '#FFFFFF',
             content_size INTEGER NOT NULL, 
             created_at TEXT NOT NULL
         )`, (err) => {
@@ -92,6 +83,22 @@ function setupDatabase() {
             console.log('Users table created or already exists.');
         });
 
+       // Create views table
+        db.run(`CREATE TABLE IF NOT EXISTS views (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            paste_id INTEGER NOT NULL,
+            ip TEXT NOT NULL,
+            user_agent TEXT NOT NULL,
+            viewed_at TEXT NOT NULL,
+            FOREIGN KEY(paste_id) REFERENCES pastes(id)
+        )`, (err) => {
+            if (err) {
+                console.error('Error creating views table:', err.message);
+                process.exit(1);
+            }
+            console.log('Views table created or already exists.');
+        });
+
         // Create comments table
         db.run(`CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -110,8 +117,6 @@ function setupDatabase() {
         });
     });
 }
-
-
 
 // Routes
 app.use('/', require('./routes/homepage'));
