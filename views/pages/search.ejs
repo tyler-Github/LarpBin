@@ -16,21 +16,17 @@
                 <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
                 <li><a href="/newpaste"><span class="glyphicon glyphicon-paste"></span> New Paste</a></li>
                 <li><a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                <li><a href="/upgrade"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
-                <li><a href="/wallofclowns"><span class="glyphicon glyphicon-pawn"></span> Wall of Clowns</a></li>
+                <li><a href="/"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
+                <li><a href="/"><span class="glyphicon glyphicon-pawn"></span> Wall of Clowns</a></li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="/">About
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/faq"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
-                        <li><a href="/viewpaste?id=55038"><span class="glyphicon glyphicon-book"></span> ToS</a>
-                        </li>
-                        <li><a href="/viewpaste?id=29175"><span class="glyphicon glyphicon-refresh"></span>
-                                Changelog</a></li>
-                        <li><a href="/donate"><span class="glyphicon glyphicon-bitcoin"></span> Donate</a></li>
-                        <li><a href="/prices"><span class="glyphicon glyphicon-tags"></span> Prices</a></li>
-                        <li><a href="/contact"><span class="glyphicon glyphicon-envelope"></span> Contact</a>
+                        <li><a href="/"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
+                        <li><a href="/"><span class="glyphicon glyphicon-bitcoin"></span> Donate</a></li>
+                        <li><a href="/"><span class="glyphicon glyphicon-tags"></span> Prices</a></li>
+                        <li><a href="/"><span class="glyphicon glyphicon-envelope"></span> Contact</a>
                         </li>
                     </ul>
                 </li>
@@ -55,24 +51,20 @@
                         <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
                         <li><a href="/newpaste"><span class="glyphicon glyphicon-paste"></span> New Paste</a></li>
                         <li><a href="/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                        <li><a href="/upgrade"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
-                        <li><a href="/wallofclowns"><span class="glyphicon glyphicon-pawn"></span> Wall of
+                        <li><a href="/"><span class="glyphicon glyphicon-tag"></span> Upgrades</a></li>
+                        <li><a href="/"><span class="glyphicon glyphicon-pawn"></span> Wall of
                                 Clowns</a></li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="/">About
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="/faq.php"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
-                                <li><a href="/viewpaste.php?id=55038"><span class="glyphicon glyphicon-book"></span>
-                                        ToS</a></li>
-                                <li><a href="/viewpaste.php?id=29175"><span
-                                            class="glyphicon glyphicon-refresh"></span> Changelog</a></li>
-                                <li><a href="/donate.php"><span class="glyphicon glyphicon-bitcoin"></span>
+                                <li><a href="/"><span class="glyphicon glyphicon-check"></span> FAQ</a></li>
+                                <li><a href="/"><span class="glyphicon glyphicon-bitcoin"></span>
                                         Donate</a></li>
-                                <li><a href="/prices.php"><span class="glyphicon glyphicon-tags"></span> Prices</a>
+                                <li><a href="/"><span class="glyphicon glyphicon-tags"></span> Prices</a>
                                 </li>
-                                <li><a href="/contact.php"><span class="glyphicon glyphicon-envelope"></span>
+                                <li><a href="/"><span class="glyphicon glyphicon-envelope"></span>
                                         Contact</a></li>
                             </ul>
                         </li>
@@ -123,15 +115,17 @@
                     <tr>
                         <th>Title</th>
                         <th>Made by</th>
+                        <th>File Size</th>
                         <th>Date created</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% pastes.forEach(paste => { %>
                         <tr>
-                            <td><a href="/paste/<%= paste.id %>"><%= paste.title %></a></td>
-                            <td><a href="/profile/<%= paste.user_id %>"><%= paste.user_name %></a></td>
-                            <td><%= paste.created_at %></td>
+                            <td><a style="color: <%= paste.text_color %> !important;" href="/paste/<%= paste.id %>"><%= paste.title %></a></td>
+                            <td><a style="color: <%= paste.text_color %> !important;" href="/profile/<%= paste.user_id %>"><%= paste.user_name %></a></td>
+                            <td style="color: <%= paste.text_color %> !important;"><%= paste.content_size %> bytes</td></td>
+                            <td style="color: <%= paste.text_color %> !important;"><%= paste.created_at %></td>
                         </tr>
                     <% }) %>
                 </tbody>

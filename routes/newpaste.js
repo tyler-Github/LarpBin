@@ -13,33 +13,24 @@ router.get('/', (req, res) => {
     res.render('pages/newpaste', { username: username });
 });
 
-// New Paste route
 router.post('/', (req, res) => {
-    // Retrieve paste data from the request body
-    const { title, content } = req.body;
-
-    // Generate a random title if the provided title is empty
+    const { title, content, text_color } = req.body; // Accept text_color
     const generatedTitle = title ? title : generateRandomTitle();
-
-    // Check if the content is provided
+    
     if (!content) {
         return res.status(400).send('Content is required');
     }
 
-    // Retrieve the username from the cookies or set it to 'Anonymous'
     const username = req.cookies.username || 'Anonymous';
-
-    // Calculate the size of the content in bytes
     const contentSize = Buffer.byteLength(content, 'utf-8');
 
-    // Insert the new paste into the database along with the username and content size
-    const sql = 'INSERT INTO pastes (title, content, created_at, user_name, content_size) VALUES (?, ?, datetime("now"), ?, ?)';
-    db.run(sql, [generatedTitle, content, username, contentSize], function(err) {
+    // Insert the new paste including text_color
+    const sql = `INSERT INTO pastes (title, content, created_at, user_name, content_size, text_color) VALUES (?, ?, datetime("now"), ?, ?, ?)`;
+    db.run(sql, [generatedTitle, content, username, contentSize, text_color || '#FFFFFF'], function(err) {
         if (err) {
             console.error(err.message);
             return res.status(500).send('Internal Server Error');
         }
-        // Successfully inserted, redirect to homepage
         res.redirect('/');
     });
 });

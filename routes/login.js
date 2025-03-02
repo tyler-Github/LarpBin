@@ -38,6 +38,7 @@ router.get('/logout', (req, res) => {
     res.clearCookie('username');
     res.clearCookie('Admin');
     res.clearCookie('connect.sid');
+    res.clearCookie('user_id');
     res.redirect('/');
 });
 
@@ -59,6 +60,7 @@ router.post('/', (req, res) => {
         if (match) {
             res.cookie('LoggedIn', true, { httpOnly: true });
             res.cookie('username', username, { httpOnly: true });
+            res.cookie('user_id', user.id, { httpOnly: true });
 
             // Set Admin cookie if user is an admin
             if (user.admin === 1) {

@@ -173,10 +173,10 @@
 
             <div class="container" style="background-color: #111111; min-height: 100vh; border: 1px #282828; border-style: none solid; padding-bottom: 20px;">
                 <div class="profile-cont" style="position: relative;">
-                    <div style="background: linear-gradient(rgba(17, 17, 17, 0.7), rgba(0, 0, 0, 0.7)), url('<%= user.banner || 'https://cdn.doxbin.com/banner_pic/4e1c7f1822987def0c390c8b973ef13b.png' %>') no-repeat center; background-size: cover; margin-top: -15px;">
+                    <div style="background: linear-gradient(rgba(17, 17, 17, 0.7), rgba(0, 0, 0, 0.7)), url('<%= user.banner || '/media/default_banner.jpg' %>') no-repeat center; background-size: cover; margin-top: -15px;">
                         <div class="profile-padding" style="padding-top: 10px !important;">
                             <div class="profile-img">
-                                <img style="height: 120px; width: 120px;" src="<%= user.profile_picture || 'https://cdn.doxbin.com/profile_pic/default.jpg' %>">
+                                <img style="height: 120px; width: 120px;" src="<%= user.profile_picture || '/media/default_profile.jpg' %>">
                             </div>
                             <h5 class="gray" style="font-size: 24px; margin: 0px 20px 0px 2px; padding-top: 0px; display: inline-block; color: #FFFE71; font-weight: bold;">
                                 <%= user.username %>

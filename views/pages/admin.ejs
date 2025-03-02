@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="/css/admin.css">
     <%- include('../partials/header') %>
 </head>
+
 <body>
     <h1>Admin Panel</h1>
     <p>Welcome, <%= username %></p>
@@ -24,6 +26,7 @@
                 <th>Title</th>
                 <th>Content</th>
                 <th>Created At</th>
+                <th>Pinned</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -71,8 +74,12 @@
                             <td>${paste.title}</td>
                             <td>${paste.content}</td>
                             <td>${paste.created_at}</td>
+                            <td>${paste.pinned ? '✅' : '❌'}</td>
                             <td>
                                 <button onclick="deletePaste(${paste.id})">Delete</button>
+                                <button onclick="togglePin(${paste.id}, ${paste.pinned})">
+                                    ${paste.pinned ? 'Unpin' : 'Pin'}
+                                </button>
                             </td>
                         `;
                         table.appendChild(row);
@@ -101,6 +108,17 @@
                 searchPastes();
             });
         }
+
+        function togglePin(id, isPinned) {
+            fetch('/admin/toggle-pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `pasteId=${id}&pinned=${isPinned ? 0 : 1}`
+            }).then(() => {
+                searchPastes();
+            });
+        }
     </script>
 </body>
+
 </html>
