@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include('../partials/header') %>
-    <title>Sign Up</title>
+        <title>Sign Up</title>
 </head>
+
 <body>
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -43,7 +45,7 @@
         <div class="col-lg-12 col-md-12 col-12"><br>
         </div>
     </div>
-    
+
     <div class="reglog-form">
         <form id="signupForm" action="/signup" method="POST">
             <label for="username">Username</label><br>
@@ -54,12 +56,12 @@
             <input type="password" name="password" placeholder="Password" required><br>
             <label for="confirmpwd">Repeat Password</label><br>
             <input type="password" name="confirmpwd" placeholder="Repeat Password" required><br>
-            
+
             <div class="h-captcha" data-sitekey="ca809027-c3cb-42b6-9dd8-31d626eaa472"></div>
             <br>
-            
+
             <input type="submit" name="submit" value="Register">
-            
+
             <p>Please make sure your username does not contain any special characters or spaces.</p>
             <p>We do no validation on emails/XMPP addresses, so feel free to enter whatever you want.</p>
             <p>Please remember your password; if you forget it, you might have to pay a fine to get it reset.</p>
@@ -68,7 +70,7 @@
 
     <script src="https://hcaptcha.com/1/api.js" async defer></script>
     <script>
-        document.getElementById('signupForm').addEventListener('submit', function(event) {
+        document.getElementById('signupForm').addEventListener('submit', function (event) {
             var captchaResponse = document.querySelector('textarea[name="h-captcha-response"]').value;
             if (!captchaResponse) {
                 alert('Please complete the hCaptcha challenge.');
@@ -77,4 +79,5 @@
         });
     </script>
 </body>
+
 </html>
