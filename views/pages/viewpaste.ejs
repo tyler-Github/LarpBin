@@ -25,12 +25,17 @@
         <a target="_blank" href="/newpaste" class="btn">New Paste</a><br><br>
         <a target="_blank" href="paste/viewraw?id=<%= paste.id %>" class="btn">View Raw</a><br><br>
                 
-        <form action="/paste/comment" method="post">
-            <input type="hidden" name="paste_id" value="<%= paste.id %>">
-            <input type="hidden" name="user_id" value="<%= user_id %>"> <!-- Use user_id from backend -->
-            <textarea name="comment" class="comment-text" placeholder="Enter comment"></textarea>
-            <div class="h-captcha" data-sitekey="ca809027-c3cb-42b6-9dd8-31d626eaa472"></div>
-            <input type="submit" name="submit" value="Post Comment">
+        <% if (paste.pinned) { %>
+            <p style="color: red; font-weight: bold;">Comments are disabled because this paste is pinned by an Admin.</p>
+        <% } else { %>
+            <form action="/paste/comment" method="post">
+                <input type="hidden" name="paste_id" value="<%= paste.id %>">
+                <input type="hidden" name="user_id" value="<%= user_id %>">
+                <textarea name="comment" class="comment-text" placeholder="Enter comment"></textarea>
+                <div class="h-captcha" data-sitekey="ca809027-c3cb-42b6-9dd8-31d626eaa472"></div>
+                <input type="submit" name="submit" value="Post Comment">
+            </form>
+        
             <div class="comment-container">
                 <div class="b-comments" id="paste-comments">
                     <% comments.forEach(comment => { %>
@@ -48,6 +53,7 @@
                     <% }) %>
                 </div>
             </div>
+        <% } %>        
             <a href="/">Back</a>
         </form>
     </div>
