@@ -8,89 +8,101 @@
     <link rel="stylesheet" href="/css/admin.css">
     <%- include('../partials/header') %>
 
-    <style>
-        /* Dark Mode Styling */
-        body {
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+        <style>
+            /* Dark Mode Styling */
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+            }
 
-        h1, h2 { color: #ffffff; }
+            h1,
+            h2 {
+                color: #ffffff;
+            }
 
-        .search-bar {
-            width: 100%;
-            max-width: 400px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #333;
-            background: #222;
-            color: #fff;
-            border-radius: 5px;
-        }
+            .search-bar {
+                width: 100%;
+                max-width: 400px;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #333;
+                background: #222;
+                color: #fff;
+                border-radius: 5px;
+            }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #1e1e1e;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: #1e1e1e;
+                border-radius: 8px;
+                overflow: hidden;
+                margin-bottom: 30px;
+            }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #333;
-        }
+            th,
+            td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #333;
+            }
 
-        th { background: #333; color: #fff; }
+            th {
+                background: #333;
+                color: #fff;
+            }
 
-        tr:hover { background: #292929; }
+            tr:hover {
+                background: #292929;
+            }
 
-        button {
-            background: #ff5252;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+            button {
+                background: #ff5252;
+                color: white;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
 
-        button:hover { background: #ff3333; }
+            button:hover {
+                background: #ff3333;
+            }
 
-        .secondary-btn {
-            background: #444;
-        }
+            .secondary-btn {
+                background: #444;
+            }
 
-        .secondary-btn:hover {
-            background: #666;
-        }
+            .secondary-btn:hover {
+                background: #666;
+            }
 
-        .database-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #1a1a1a;
-            border-radius: 8px;
-        }
+            .database-section {
+                margin-top: 30px;
+                padding: 20px;
+                background: #1a1a1a;
+                border-radius: 8px;
+            }
 
-        .database-section input {
-            padding: 10px;
-            border: 1px solid #444;
-            background: #222;
-            color: #fff;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-    </style>
+            .database-section input {
+                padding: 10px;
+                border: 1px solid #444;
+                background: #222;
+                color: #fff;
+                border-radius: 5px;
+                margin-right: 10px;
+            }
+        </style>
 </head>
 
 <body>
     <h1>Admin Panel</h1>
-    <p>Welcome, <%= username %></p>
+    <p>Welcome, <%= username %>
+    </p>
 
     <!-- Pastes Section -->
     <h2>Pastes</h2>
@@ -181,7 +193,7 @@
                                 ${paste.pinned ? 'Pinned' : 'Pin'}
                                  </button>
                             </td>
-                            <td><button onclick="deleteItem('/admin/delete', { pasteId: ${paste.id} }, loadPastes)">Delete</button></td>
+                           <td><button onclick="deleteItem('/admin/delete', ${paste.id}, loadPastes)">Delete</button></td>
                         </tr>`;
                 });
             });
@@ -197,7 +209,7 @@
                             <td>${user.id}</td>
                             <td>${user.username}</td>
                             <td>${user.email}</td>
-                            <td><button onclick="deleteItem('/admin/delete-user', { userId: ${user.id} }, loadUsers)">Delete</button></td>
+                            <td><button onclick="deleteItem('/admin/delete-user', ${user.id}, loadUsers)">Delete</button></td>
                         </tr>`;
                 });
             });
@@ -213,15 +225,18 @@
                             <td>${comment.id}</td>
                             <td>${comment.username || 'Anonymous'}</td>
                             <td>${comment.comment}</td>
-                            <td><button onclick="deleteItem('/admin/delete-comment', { commentId: ${comment.id} }, loadComments)">Delete</button></td>
+                           <td><button onclick="deleteItem('/admin/delete-comment', ${comment.id}, loadComments)">Delete</button></td>
                         </tr>`;
                 });
             });
         }
-
-        function deleteItem(url, data, reload) {
-            fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-                .then(() => reload());
+        
+        function deleteItem(url, id, reload) {
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `pasteId=${encodeURIComponent(id)}` // Properly encoding the ID
+            }).then(() => reload());
         }
 
         function togglePin(id, isPinned) {
