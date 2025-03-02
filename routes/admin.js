@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
 
@@ -66,5 +68,35 @@ router.post('/toggle-pin', isAdmin, (req, res) => {
     });
 });
 
+// Download Database
+router.get('/download-db', isAdmin, (req, res) => {
+    const dbPath = path.resolve('./database/pastebin.db');
+    
+    res.download(dbPath, 'pastebin.db', (err) => {
+        if (err) {
+            console.error('Error downloading database:', err);
+            res.status(500).send('Error downloading database');
+        }
+    });
+});
+
+// Upload Database
+router.post('/upload-db', isAdmin, (req, res) => {
+    if (!req.files || !req.files.database) {
+        return res.status(400).send('No file uploaded');
+    }
+
+    const dbFile = req.files.database;
+    const dbPath = path.resolve('./database/pastebin.db');
+
+    dbFile.mv(dbPath, (err) => {
+        if (err) {
+            console.error('Error uploading database:', err);
+            return res.status(500).send('Error uploading database');
+        }
+
+        res.send('Database uploaded successfully');
+    });
+});
 
 module.exports = router;
